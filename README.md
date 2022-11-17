@@ -1,5 +1,5 @@
 
-# Scala/ZIO: Postgres/Slick/Tapir/zio-http Example
+# Scala/ZIO 2.x: Postgres/Slick/Tapir/zio-http Example
 
 This example illustrates use of:
 
