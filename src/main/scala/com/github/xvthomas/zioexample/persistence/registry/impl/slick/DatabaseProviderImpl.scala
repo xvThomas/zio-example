@@ -8,12 +8,13 @@ import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.{JdbcBackend, PostgresProfile}
 import zio.{Scope, UIO, ZIO, ZLayer}
 
+final case class DatabaseSettings(
+  url: String,
+  username: String,
+  password: String
+)
+
 trait DatabaseProviderImpl {
-  case class DatabaseSettings(
-    url: String,
-    username: String,
-    password: String
-  )
 
   def makeScopedConnection(settings: DatabaseSettings): ZIO[Any with Scope, Nothing, jdbc.JdbcBackend.DatabaseDef] =
     ZIO.acquireRelease(
