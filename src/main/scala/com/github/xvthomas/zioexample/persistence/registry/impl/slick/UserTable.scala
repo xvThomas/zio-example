@@ -1,7 +1,7 @@
 package com.github.xvthomas.zioexample.persistence.registry.impl.slick
 
 import com.github.xvthomas.zioexample.persistence.model.User
-import UserTable.tableName
+import com.github.xvthomas.zioexample.persistence.registry.impl.slick.UserTable.tableName
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.{Index, ProvenShape, Tag}
 

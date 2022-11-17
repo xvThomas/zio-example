@@ -6,11 +6,11 @@ import com.github.xvthomas.zioexample.persistence.registry.UserRegistry
 import com.github.xvthomas.zioexample.persistence.validation.UserValidator
 import com.github.xvthomas.zioexample.service.helpers.{ProblemDetails, PublicEndpointEx, SimpleEndpointInfo, WithProblemDetails}
 import com.github.xvthomas.zioexample.service.protocols.{IOUser, IOUserJsonProtocol, IOUserSchema}
-import sttp.tapir.{endpoint, oneOf, path}
 import sttp.tapir.json.zio.jsonBody
 import sttp.tapir.model.ServerRequest
 import sttp.tapir.ztapir.{RichZEndpoint, ZServerEndpoint}
-import zio.{IO, ZIO}
+import sttp.tapir.{endpoint, oneOf, path}
+import zio.IO
 
 final case class UserEndpoints(
   userRegistry: UserRegistry,

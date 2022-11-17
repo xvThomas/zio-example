@@ -5,9 +5,9 @@ import com.github.xvthomas.zioexample.persistence.model.Post
 import com.github.xvthomas.zioexample.persistence.registry.PostRegistry
 import org.postgresql.util.PSQLException
 import slick.interop.zio.DatabaseProvider
-import zio.{ULayer, ZIO, ZLayer}
 import slick.interop.zio.syntax._
 import slick.jdbc.PostgresProfile.api._
+import zio.{ULayer, ZIO, ZLayer}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

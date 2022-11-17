@@ -3,8 +3,8 @@ package com.github.xvthomas.zioexample.persistence.validation.impl.zio
 import com.github.xvthomas.zioexample.persistence.PersistenceError
 import com.github.xvthomas.zioexample.persistence.model.User
 import com.github.xvthomas.zioexample.persistence.validation.{UserEmailInvalid, UserLoginLength, UserValidator}
-import zio.{NonEmptyChunk, Scope, ZIO}
 import zio.test.{Spec, TestEnvironment, TestResult, ZIOSpecDefault, assertTrue}
+import zio.{NonEmptyChunk, Scope, ZIO}
 
 object UserValidatorSpec extends ZIOSpecDefault {
 

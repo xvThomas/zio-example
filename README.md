@@ -3,7 +3,7 @@
 
 This example illustrates use of:
 
-- **Postgres** database and **Slick** for data access layer
+- **Postgres** database and **Slick** for data access
 - **Tapir**/**zio-http** for building the underlying REST API with **Swagger** UI. 
 
 As Slick does not provide support for ZIO, **zio-slick-interop** is used to ensure a bottom-up use of zio as far as possible.
@@ -51,10 +51,10 @@ This quite dummy model is composed by two tables: **User** and **Post**.
 
 **User**
 
-| Field   | Data type  | Description   | Constraint |
-| ------- | ---------- | ------------- | ------------- |
-| login   | String     | id of a user  | Primary key, Not empty |
-| email   | String     | email of the user | Must be a valid email |
+| Field   | Data type  | Description   | Constraint                                                   |
+| ------- | ---------- | ------------- |--------------------------------------------------------------|
+| login   | String     | id of a user  | Primary key, Not empty, Length must be upper or equal than 6 |
+| email   | String     | email of the user | Not Null, Must be a valid email                              |
 
 **Post**
 

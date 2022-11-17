@@ -5,8 +5,7 @@ import com.github.xvthomas.zioexample.persistence.registry.{PostRegistry, UserRe
 import com.github.xvthomas.zioexample.persistence.validation.impl.zio.{PostValidatorImpl, UserValidatorImpl}
 import com.github.xvthomas.zioexample.persistence.validation.{PostValidator, UserValidator}
 import slick.interop.zio.DatabaseProvider
-import zio.prelude.PartialOrdOps
-import zio.{Schedule, ZIO, durationInt}
+import zio.ZIO
 
 sealed abstract case class R(
   userRegistry: UserRegistry,
