@@ -4,7 +4,7 @@
             <pattern> [%d{HH:mm:ss.SSS}] %level [%thread] %logger{36}@%method:%line - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 
@@ -16,7 +16,7 @@
     <logger name="slick.jdbc.DriverDataSource"              level="INFO" />
     <logger name="slick.relational.ResultConverterCompiler" level="INFO" />
     <logger name="slick.jdbc.JdbcBackend.statement"         level="INFO" />
-    <logger name="slick.jdbc.JdbcBackend.benchmark"         level="WARN" />
+    <logger name="slick.jdbc.JdbcBackend.benchmark"         level="INFO" />
     <logger name="slick.jdbc.StatementInvoker.result"       level="INFO" />
 
 </configuration>

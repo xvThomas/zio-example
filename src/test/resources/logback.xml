@@ -11,7 +11,7 @@
     <logger name="org.testcontainers" level="WARN"/>
     <logger name="com.github.dockerjava" level="WARN"/>
 
-<!--    <logger name="com.github.xvthomas.zioexample.persistence.registry.impl.slick" level="WARN" />
+    <logger name="com.github.xvthomas.zioexample.persistence.registry.impl.slick" level="WARN" />
 
     <logger name="slick.compiler"                           level="INFO" />
     <logger name="slick.compiler.QueryCompiler"             level="INFO" />
@@ -20,6 +20,6 @@
     <logger name="slick.relational.ResultConverterCompiler" level="INFO" />
     <logger name="slick.jdbc.JdbcBackend.statement"         level="INFO" />
     <logger name="slick.jdbc.JdbcBackend.benchmark"         level="DEBUG" />
-    <logger name="slick.jdbc.StatementInvoker.result"       level="INFO" />-->
+    <logger name="slick.jdbc.StatementInvoker.result"       level="INFO" />
 
 </configuration>

@@ -46,12 +46,11 @@ case object Main extends ZIOAppDefault {
 
     R()
       .flatMap(r =>
-        Server.start(httpPort, ZioHttpInterpreter().toHttp(routes(r)) @@ cors(config))
-          *> ZIO.logInfo(s"Server started on port $httpPort")
+        ZIO.logInfo(s"Server starting on port $httpPort") *>
+          Server.start(httpPort, ZioHttpInterpreter().toHttp(routes(r)) @@ cors(config))
       )
       .providePersistenceLayers
       .retry(persistencePolicy)
       .catchAll(error => ZIO.logError(error.toString)).exitCode
-
   }
 }
