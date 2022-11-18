@@ -44,13 +44,12 @@ val postgresDependencies =
 val tapirOrganization   = "com.softwaremill.sttp.tapir"
 val tapirVersion        = "1.2.1"
 val zioHttpOrganization = "io.d11"
-val zioHttpVersion      = "2.0.0-RC11"
+val zioHttpVersion      = "2.0.0-RC10"
 val httpDependencies = Seq(
   tapirOrganization   %% "tapir-zio"                % tapirVersion,
   tapirOrganization   %% "tapir-zio-http-server"    % tapirVersion,
   tapirOrganization   %% "tapir-prometheus-metrics" % tapirVersion,
   tapirOrganization   %% "tapir-swagger-ui-bundle"  % tapirVersion,
   tapirOrganization   %% "tapir-json-zio"           % tapirVersion,
-  tapirOrganization   %% "tapir-sttp-stub-server"   % tapirVersion,
   zioHttpOrganization %% "zhttp"                    % zioHttpVersion
 )
