@@ -4,7 +4,7 @@ import com.github.xvthomas.zioexample.persistence.PersistenceError
 import com.github.xvthomas.zioexample.persistence.model.User
 import com.github.xvthomas.zioexample.persistence.registry.UserRegistry
 import com.github.xvthomas.zioexample.persistence.validation.UserValidator
-import com.github.xvthomas.zioexample.service.helpers.{ProblemDetails, PublicEndpointEx, SimpleEndpointInfo, WithProblemDetails}
+import com.github.xvthomas.zioexample.service.helpers._
 import com.github.xvthomas.zioexample.service.protocols.{IOUser, IOUserJsonProtocol, IOUserSchema}
 import sttp.tapir.json.zio.jsonBody
 import sttp.tapir.model.ServerRequest
@@ -16,7 +16,7 @@ final case class UserEndpoints(
   userRegistry: UserRegistry,
   userValidator: UserValidator
 ) extends IOUserJsonProtocol with IOUserSchema
-  with PublicEndpointEx with WithProblemDetails {
+  with PublicEndpointEx with WithProblemDetails with ResponseLogger {
 
   private val endpointsTag  = "User"
   private val endpointsPath = "user"
@@ -38,6 +38,7 @@ final case class UserEndpoints(
         .flatMap(userRegistry.insert)
         .unit
         .mapPersistentError(serverRequest)
+        .logResponse()
   }
 
   private val putUserEndpoint: PublicEndpointEx[IOUser, Unit] = endpoint.put
@@ -48,10 +49,10 @@ final case class UserEndpoints(
     .withServerRequest
   val putUserLogic: ((IOUser, ServerRequest)) => IO[ProblemDetails, Unit] = {
     case (entity, serverRequest) =>
-      validate(entity)
-        .flatMap(userRegistry.update)
+      validate(entity).flatMap(userRegistry.update)
         .unit
         .mapPersistentError(serverRequest)
+        .logResponse()
   }
 
   val getUserEndpoint: PublicEndpointEx[String, IOUser] = endpoint.get
@@ -66,6 +67,7 @@ final case class UserEndpoints(
       userRegistry.selectOne(code)
         .map(convert)
         .mapPersistentError(serverRequest)
+        .logResponse()
   }
 
   val deleteUserEndpoint: PublicEndpointEx[String, Unit] = endpoint.delete
@@ -76,7 +78,10 @@ final case class UserEndpoints(
     .withServerRequest
   val deleteUserLogic: ((String, ServerRequest)) => IO[ProblemDetails, Unit] = {
     case (code, serverRequest) =>
-      userRegistry.delete(code).mapPersistentError(serverRequest)
+      userRegistry
+        .delete(code)
+        .mapPersistentError(serverRequest)
+        .logResponse()
   }
 
   val getUsersEndpoint: PublicEndpointEx[Unit, Seq[IOUser]] = endpoint.get
@@ -90,6 +95,7 @@ final case class UserEndpoints(
       userRegistry.selectAll()
         .map(res => res.map(convert))
         .mapPersistentError(serverRequest)
+        .logResponse()
   }
 
   def routes: List[ZServerEndpoint[Any, Any]] =

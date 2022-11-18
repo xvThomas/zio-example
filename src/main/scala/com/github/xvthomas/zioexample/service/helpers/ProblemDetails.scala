@@ -46,16 +46,13 @@ private[helpers] final case class BadRequest(
   detail: Option[String],
   instance: Option[String],
   status: Int
-  // errors: List[String]
 ) extends ProblemDetails {
   def withRequest(request: ServerRequest): BadRequest = copy(instance = Some(request.uri.toString()))
-  // def withErrors(queryArgumentsInputErrors: List[String]): BadRequest =
-  //  copy(errors = queryArgumentsInputErrors)
 }
 
 object BadRequest {
   def apply(title: String, `type`: Option[String] = None, detail: Option[String] = None, instance: Option[String] = None): BadRequest =
-    new BadRequest(title, `type`, detail, instance, Status.BadRequest.code /*, List.empty */ )
+    new BadRequest(title, `type`, detail, instance, Status.BadRequest.code)
 }
 
 private[helpers] final case class InternalServerError(
@@ -124,31 +121,17 @@ trait WithProblemDetails {
     oneOfVariant(StatusCode.UnprocessableEntity, jsonBody[UnprocessableEntity].description("Unprocessable Entity"))
 
   implicit class PersistentErrorToProblemDetails[Z, A](res: ZIO[Z, PersistenceError, A]) {
-    def mapPersistentError(serverRequest: ServerRequest): ZIO[Z, ProblemDetails, A] = {
+    def mapPersistentError(serverRequest: ServerRequest): ZIO[Z, ProblemDetails, A] =
       res.mapError(WithProblemDetails.mapPersistentError(_, serverRequest))
-    }
-    def mapBoth(serverRequest: ServerRequest): ZIO[Z, ProblemDetails, A] =
-      res.foldZIO(
-        e =>
-          (e match {
-            case error: PersistenceError.NotFound              => ZIO.logDebug(error.toString)
-            case error: PersistenceError.AlreadyExists         => ZIO.logDebug(error.toString)
-            case error: PersistenceError.MissingReference      => ZIO.logDebug(error.toString)
-            case error: PersistenceError.UsedReferenceOnDelete => ZIO.logDebug(error.toString)
-            case error: PersistenceError.UnexpectedError       => ZIO.logFatal(error.toString)
-            case error: PersistenceError.ValidationErrors      => ZIO.logDebug(error.toString)
-          }) *> ZIO.fail(WithProblemDetails.mapPersistentError(e, serverRequest)),
-        r => ZIO.succeed(r)
-      )
   }
 }
 
 object WithProblemDetails {
 
-  val EntityNotFoundTitle      = "Entity not found"
-  val MissingEntityTitle       = "Missing entity"
-  val UnableToDeleteEntityTile = "Unable to delete entity"
-  val ValidationErrorTitle     = "Validation Error"
+  val EntityNotFoundTitle       = "Entity not found"
+  val MissingEntityTitle        = "Missing entity"
+  val UnableToDeleteEntityTitle = "Unable to delete entity"
+  val ValidationErrorTitle      = "Validation Error"
 
   def mapPersistentError(error: PersistenceError, serverRequest: ServerRequest): ProblemDetails =
     error match {
@@ -163,7 +146,7 @@ object WithProblemDetails {
         ).withRequest(serverRequest)
       case PersistenceError.UsedReferenceOnDelete(key, value) =>
         BadRequest(
-          title = UnableToDeleteEntityTile,
+          title = UnableToDeleteEntityTitle,
           detail = Some(s"$key=$value, $value is used by another entity")
         ).withRequest(serverRequest)
 

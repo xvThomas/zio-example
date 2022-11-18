@@ -18,7 +18,7 @@ case object R {
   type PersistenceLayers =
     DatabaseProvider with UserRegistry with PostRegistry with UserValidator with PostValidator
 
-  def apply(): ZIO[PersistenceLayers, Nothing, R] =
+  def apply(): ZIO[PersistenceLayers, Throwable, R] =
     for {
       userRegistry  <- ZIO.service[UserRegistry]
       postRegistry  <- ZIO.service[PostRegistry]
