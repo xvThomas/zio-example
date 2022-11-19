@@ -4,7 +4,7 @@ import com.github.xvthomas.zioexample.persistence.PersistenceError
 import com.github.xvthomas.zioexample.persistence.model.Post
 import com.github.xvthomas.zioexample.persistence.registry.PostRegistry
 import com.github.xvthomas.zioexample.persistence.validation.PostValidator
-import com.github.xvthomas.zioexample.service.helpers.{ProblemDetails, PublicEndpointEx, SimpleEndpointInfo, WithProblemDetails}
+import com.github.xvthomas.zioexample.service.helpers._
 import com.github.xvthomas.zioexample.service.protocols._
 import sttp.tapir.json.zio.jsonBody
 import sttp.tapir.model.ServerRequest
@@ -13,14 +13,15 @@ import sttp.tapir.{endpoint, oneOf, path}
 import zio.IO
 
 final case class PostEndpoints(
-  postRegistry: PostRegistry,
-  postValidator: PostValidator
-) extends IPostJsonProtocol with IPostSchema
+                                postRegistry: PostRegistry,
+                                postValidator: PostValidator
+                              ) extends EndpointLogger
+  with PublicEndpointEx with WithProblemDetails
+  with IPostJsonProtocol with IPostSchema
   with IPostMessageJsonProtocol with IPostMessageSchema
-  with OPostJsonProtocol with OPostSchema
-  with PublicEndpointEx with WithProblemDetails {
+  with OPostJsonProtocol with OPostSchema {
 
-  private val endpointsTag  = "Post"
+  private val endpointsTag = "Post"
   private val endpointsPath = "post"
 
   private def validate(iPost: IPost): IO[PersistenceError.ValidationErrors, Post] =
@@ -42,6 +43,7 @@ final case class PostEndpoints(
       .flatMap(postRegistry.insert)
       .unit
       .mapPersistentError(serverRequest)
+      .logEndpoint(serverRequest)
   }
 
   private val putPostEndpoint: PublicEndpointEx[IPostMessage, Unit] = endpoint.put
@@ -56,6 +58,7 @@ final case class PostEndpoints(
         .flatMap({ case (id, message) => postRegistry.update(id, message) })
         .unit
         .mapPersistentError(serverRequest)
+        .logEndpoint(serverRequest)
   }
 
   val getPostEndpoint: PublicEndpointEx[Long, OPost] = endpoint.get
@@ -70,6 +73,7 @@ final case class PostEndpoints(
       postRegistry.selectOne(id)
         .map(convert)
         .mapPersistentError(serverRequest)
+        .logEndpoint(serverRequest)
   }
 
   val deletePostEndpoint: PublicEndpointEx[Long, Unit] = endpoint.delete
@@ -95,6 +99,7 @@ final case class PostEndpoints(
       postRegistry.selectAllOf(userLogin)
         .map(res => res.map(convert))
         .mapPersistentError(serverRequest)
+        .logEndpoint(serverRequest)
   }
 
   def routes: List[ZServerEndpoint[Any, Any]] =

@@ -3,6 +3,7 @@ package com.github.xvthomas.zioexample.service
 import com.github.xvthomas.zioexample.persistence.R
 import com.github.xvthomas.zioexample.persistence.R.ImplicitLayers
 import com.github.xvthomas.zioexample.service.endpoints.{PostEndpoints, UserEndpoints}
+import com.github.xvthomas.zioexample.service.helpers.Logger
 import sttp.tapir.server.metrics.prometheus.PrometheusMetrics
 import sttp.tapir.server.ziohttp.ZioHttpInterpreter
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
@@ -11,7 +12,7 @@ import zhttp.http.Middleware.cors
 import zhttp.http.middleware.Cors.CorsConfig
 import zhttp.service.Server
 import zio.prelude.PartialOrdOps
-import zio.{ExitCode, Schedule, Task, URIO, ZIO, ZIOAppDefault, durationInt}
+import zio.{ExitCode, Schedule, Task, URIO, ZIO, ZIOAppArgs, ZIOAppDefault, ZLayer, durationInt}
 
 case object Main extends ZIOAppDefault {
 
@@ -36,6 +37,8 @@ case object Main extends ZIOAppDefault {
   }
 
   val config: CorsConfig = CorsConfig(allowedOrigins = _ => true)
+
+  override val bootstrap: ZLayer[ZIOAppArgs, Any, Any] = Logger.layer
 
   override def run: URIO[Any, ExitCode] = {
     val persistencePolicy = (Schedule.fixed(3.seconds) >>> Schedule.elapsed)

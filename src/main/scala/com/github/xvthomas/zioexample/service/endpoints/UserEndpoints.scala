@@ -13,12 +13,13 @@ import sttp.tapir.{endpoint, oneOf, path}
 import zio.IO
 
 final case class UserEndpoints(
-  userRegistry: UserRegistry,
-  userValidator: UserValidator
-) extends IOUserJsonProtocol with IOUserSchema
-  with PublicEndpointEx with WithProblemDetails with ResponseLogger {
+                                userRegistry: UserRegistry,
+                                userValidator: UserValidator
+                              ) extends EndpointLogger
+  with PublicEndpointEx with WithProblemDetails
+  with IOUserJsonProtocol with IOUserSchema {
 
-  private val endpointsTag  = "User"
+  private val endpointsTag = "User"
   private val endpointsPath = "user"
 
   private def validate(ioUser: IOUser): IO[PersistenceError.ValidationErrors, User] =
@@ -38,7 +39,7 @@ final case class UserEndpoints(
         .flatMap(userRegistry.insert)
         .unit
         .mapPersistentError(serverRequest)
-        .logResponse()
+        .logEndpoint(serverRequest)
   }
 
   private val putUserEndpoint: PublicEndpointEx[IOUser, Unit] = endpoint.put
@@ -52,7 +53,7 @@ final case class UserEndpoints(
       validate(entity).flatMap(userRegistry.update)
         .unit
         .mapPersistentError(serverRequest)
-        .logResponse()
+        .logEndpoint(serverRequest)
   }
 
   val getUserEndpoint: PublicEndpointEx[String, IOUser] = endpoint.get
@@ -67,7 +68,7 @@ final case class UserEndpoints(
       userRegistry.selectOne(code)
         .map(convert)
         .mapPersistentError(serverRequest)
-        .logResponse()
+        .logEndpoint(serverRequest)
   }
 
   val deleteUserEndpoint: PublicEndpointEx[String, Unit] = endpoint.delete
@@ -81,7 +82,7 @@ final case class UserEndpoints(
       userRegistry
         .delete(code)
         .mapPersistentError(serverRequest)
-        .logResponse()
+        .logEndpoint(serverRequest)
   }
 
   val getUsersEndpoint: PublicEndpointEx[Unit, Seq[IOUser]] = endpoint.get
@@ -95,7 +96,7 @@ final case class UserEndpoints(
       userRegistry.selectAll()
         .map(res => res.map(convert))
         .mapPersistentError(serverRequest)
-        .logResponse()
+        .logEndpoint(serverRequest)
   }
 
   def routes: List[ZServerEndpoint[Any, Any]] =
